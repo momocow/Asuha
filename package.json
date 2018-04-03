@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Asuha: the Webhook server for online git hosting services.",
   "main": "index.js",
+  "bin": {
+    "asuha": "bin/asuha.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
