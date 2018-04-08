@@ -1,3 +1,7 @@
 #!/usr/bin/env node
 
-require('../index')
+const Asuha = require('../lib/Asuha')
+
+Asuha
+  .http()
+  .listen()

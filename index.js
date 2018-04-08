@@ -1,3 +1,1 @@
-setInterval(function () {
-  console.log('Hello')
-}, 5000)
+module.exports = require('./lib/Asuha')
