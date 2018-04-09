@@ -34,8 +34,7 @@ if (!program.verbose) {
   asuha.set('ondebug', function () {})
 }
 
-const server = 
-  .listen(port, host, function () {
-    const { port, address } = server.address()
-    console.log('Asuha is listening at %s:%d', address, port)
-  })
+const server = asuha.listen(port, host, function () {
+  const { port, address } = server.address()
+  console.log('Asuha is listening at %s:%d', address, port)
+})
