@@ -27,7 +27,8 @@
   "homepage": "https://github.com/momocow/Asuha#readme",
   "optionalDependencies": {
     "commander": "^2.15.1",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "socket.io": "^2.1.0"
   },
   "devDependencies": {
     "eslint-config-standard": "^11.0.0",
@@ -40,6 +41,7 @@
     "body": "^5.1.0",
     "ip": "^1.1.5",
     "ipware": "^1.0.0",
+    "is-plain-object": "^2.0.4",
     "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.1",
     "lodash.set": "^4.3.2",
