@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/momocow/Asuha#readme",
   "optionalDependencies": {
+    "commander": "^2.15.1",
     "express": "^4.16.3"
   },
   "devDependencies": {
@@ -39,6 +40,7 @@
     "body": "^5.1.0",
     "ip": "^1.1.5",
     "ipware": "^1.0.0",
-    "lodash.merge": "^4.6.1"
+    "lodash.merge": "^4.6.1",
+    "simple-git": "^1.92.0"
   }
 }
