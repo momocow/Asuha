@@ -65,6 +65,7 @@ test.before(async function (t) {
 test.beforeEach.cb(function (t) {
   onDebug('Set timeout: ' + TIMEOUT + ' ms')
   setTimeout(function () {
+    onDebug('Timeout!')
     t.end()
   }, TIMEOUT)
 })
