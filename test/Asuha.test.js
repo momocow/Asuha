@@ -26,6 +26,8 @@ function onDebug (...args) {
 }
 
 async function makeCommit () {
+  onDebug('Start making commit')
+
   const { stdout } = await exec('npm start')
   const commitMsg = stdout
     .split('\n')
