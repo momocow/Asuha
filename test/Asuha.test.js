@@ -14,7 +14,7 @@ const CONFIG = {
 }
 
 const test = require('ava')
-const { readFileSync } = require('fs')
+const { readFileSync, mkdirSync, existsSync, writeFileSync } = require('fs')
 const { join } = require('path')
 const { request } = require('http')
 const Asuha = require('..')
@@ -61,6 +61,17 @@ const asuha = Asuha.http()
   .set('cwd', __dirname)
   .set('whitelistIPs', true) // allow all ips (since we mock the Bitbucket webhook payload from localhost)
   .on('debug', onDebug)
+
+test.before(function (t) {
+  const dotGit = join(__dirname, 'fixture', '.git')
+  const gitConfig = join(dotGit, 'config')
+
+  if (!existsSync(dotGit) || !existsSync(gitConfig)) {
+    mkdirSync(dotGit)
+    writeFileSync(gitConfig, `[remote "origin"]
+    url = git@bitbucket.org:momocow/dummy.git`, { encoding: 'utf8' })
+  }
+})
 
 test.before.cb(function (t) {
   onDebug('Start Asuha listening for remote git events')
