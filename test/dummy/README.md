@@ -1,1 +1,0 @@
-# This is a dummy repository used for testing web hooks.
