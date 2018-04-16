@@ -1,3 +1,0 @@
-[submodule "test/dummy"]
-	path = test/dummy
-	url = git@bitbucket.org:momocow/dummy.git
