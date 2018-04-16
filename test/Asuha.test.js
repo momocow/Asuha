@@ -75,6 +75,7 @@ test.before(async function (t) {
 
 test.cb('Asuha should report the following events in order: [remote, actions.pre, action.pre, action.post, actions.post, done]', function (t) {
   t.plan(12)
+  let assertCount = 0
   asuha
     .on('error', function (err) {
       onError(err)
@@ -83,27 +84,39 @@ test.cb('Asuha should report the following events in order: [remote, actions.pre
     })
     .on('remote', function (repo) {
       t.deepEqual(repo, REPO)
+      assertCount += 1
+      onDebug('#remote <assert: %d>', assertCount)
     })
     .on('actions.pre', function (repo, actions) {
       t.deepEqual(repo, REPO)
       t.deepEqual(actions, ACTIONS)
+      assertCount += 2
+      onDebug('#actions.pre <assert: %d>', assertCount)
     })
     .on('actions.post', function (repo, actions) {
       t.deepEqual(repo, REPO)
       t.deepEqual(actions, ACTIONS)
+      assertCount += 2
+      onDebug('#actions.post <assert: %d>', assertCount)
     })
     .on('action.pre', function (repo, action) {
       t.deepEqual(repo, REPO)
       t.is(action, ACTIONS[0])
+      assertCount += 2
+      onDebug('#action.pre <assert: %d>', assertCount)
     })
     .on('action.post', function (repo, action, { stdout, stderr }) {
       t.deepEqual(repo, REPO)
       t.is(action, ACTIONS[0])
       t.is(stdout, 'done')
       t.falsy(stderr)
+      assertCount += 4
+      onDebug('#action.post <assert: %d>', assertCount)
     })
     .on('done', function (repo) {
       t.deepEqual(repo, REPO)
+      assertCount += 1
+      onDebug('#done <assert: %d>', assertCount)
       t.end()
     })
 
