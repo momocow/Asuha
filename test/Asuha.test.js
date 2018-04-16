@@ -61,16 +61,10 @@ test.before.cb(function (t) {
 
 test.before(async function (t) {
   onDebug('Update test repository')
+
+  await git.checkoutLocalBranch('master')
   await git.pull()
 })
-
-// test.beforeEach.cb(function (t) {
-//   onDebug('Set timeout: ' + TIMEOUT + ' ms')
-//   setTimeout(function () {
-//     onDebug('Timeout!')
-//     t.end()
-//   }, TIMEOUT)
-// })
 
 test.cb('Asuha should report the following events in order: [remote, actions.pre, action.pre, action.post, actions.post, done]', function (t) {
   t.plan(12)
