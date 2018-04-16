@@ -108,7 +108,7 @@ test.cb('Asuha should report the following events in order: [remote, actions.pre
     .on('action.post', function (repo, action, { stdout, stderr }) {
       t.deepEqual(repo, REPO)
       t.is(action, ACTIONS[0])
-      t.is(stdout, 'done')
+      t.is(stdout, 'done\n')
       t.falsy(stderr)
       assertCount += 4
       onDebug('#action.post <assert: %d>', assertCount)
