@@ -49,7 +49,7 @@ const asuha = Asuha.http()
 
 test.before.cb('Start Asuha listening for remote git events', function (t) {
   t.plan(0)
-  asuha.listen(function () {
+  asuha.listen(7766, '0.0.0.0', function () {
     const { port, address } = asuha.server.address()
     onDebug('Asuha is listening at %s:%d', address, port)
     t.end()
@@ -60,7 +60,7 @@ test.before('Update test repository', async function (t) {
   await git.pull()
 })
 
-test.beforeEach('Set timeout: ' + TIMEOUT + ' ms', function (t) {
+test.beforeEach.cb('Set timeout: ' + TIMEOUT + ' ms', function (t) {
   setTimeout(function () {
     t.end()
   }, TIMEOUT)
