@@ -1,0 +1,14 @@
+{
+  "repository": {
+    "scm": "git",
+    "name": "Dummy",
+    "full_name": "momocow/dummy",
+    "owner": {
+      "username": "momocow",
+      "type": "user",
+      "display_name": "momocow"
+    },
+    "type": "repository",
+    "is_private": false
+  }
+}
