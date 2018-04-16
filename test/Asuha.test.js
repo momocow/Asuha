@@ -5,7 +5,7 @@ const REPO = {
 }
 
 const ACTIONS = [
-  'echo "done"'
+  'echo done'
 ]
 
 const CONFIG = {
@@ -59,6 +59,7 @@ process.on('uncaughtException', function (err) {
 const asuha = Asuha.http()
   .set('actions', ACTIONS)
   .set('cwd', __dirname)
+  .set('whitelistIPs', true) // allow all ips (since we mock the Bitbucket webhook payload from localhost)
   .on('debug', onDebug)
 
 test.before.cb(function (t) {
@@ -71,53 +72,71 @@ test.before.cb(function (t) {
   })
 })
 
-test.cb('Asuha should report the following events in order: [remote, actions.pre, action.pre, action.post, actions.post, done]', async function (t) {
-  t.plan(13)
-  let assertCount = 0
-  asuha
-    .on('error', function (err) {
-      onError(err)
-      t.fail('Unexpected error occurs.')
-      t.end()
-    })
-    .on('remote', function (repo) {
-      t.deepEqual(repo, REPO)
-      assertCount += 1
-      onDebug('#remote <assert: %d>', assertCount)
-    })
-    .on('actions.pre', function (repo, actions) {
-      t.deepEqual(repo, REPO)
-      t.deepEqual(actions, ACTIONS)
-      assertCount += 2
-      onDebug('#actions.pre <assert: %d>', assertCount)
-    })
-    .on('actions.post', function (repo, actions) {
-      t.deepEqual(repo, REPO)
-      t.deepEqual(actions, ACTIONS)
-      assertCount += 2
-      onDebug('#actions.post <assert: %d>', assertCount)
-    })
-    .on('action.pre', function (repo, action) {
-      t.deepEqual(repo, REPO)
-      t.is(action, ACTIONS[0])
-      assertCount += 2
-      onDebug('#action.pre <assert: %d>', assertCount)
-    })
-    .on('action.post', function (repo, action, { stdout, stderr }) {
-      t.deepEqual(repo, REPO)
-      t.is(action, ACTIONS[0])
-      t.is(stdout, 'done\n')
-      t.falsy(stderr)
-      assertCount += 4
-      onDebug('#action.post <assert: %d>', assertCount)
-    })
-    .on('done', function (repo) {
-      t.deepEqual(repo, REPO)
-      assertCount += 1
-      onDebug('#done <assert: %d>', assertCount)
-    })
+test(`Asuha should report the following events in order: [
+  "remote",
+  "actions.pre",
+  "action.pre",
+  "action.post",
+  "actions.post",
+  "done"
+]`, function (t) {
+  return Promise.all([
+    new Promise(function (resolve, reject) {
+      let eventCount = 0
 
-  const status = await mockRemote()
-  t.is(status, 200)
-  t.end()
+      const onEvent = function () {
+        eventCount++
+        if (eventCount === 6) {
+          resolve()
+        }
+      }
+
+      asuha
+        .on('error', function (err) {
+          onError(err)
+          t.fail('Unexpected error occurs.')
+          reject(err)
+        })
+        .on('remote', function (repo) {
+          t.deepEqual(repo, REPO)
+          onDebug('#remote')
+          onEvent()
+        })
+        .on('actions.pre', function (repo, actions) {
+          t.deepEqual(repo, REPO)
+          t.deepEqual(actions, ACTIONS)
+          onDebug('#actions.pre')
+          onEvent()
+        })
+        .on('actions.post', function (repo, actions) {
+          t.deepEqual(repo, REPO)
+          t.deepEqual(actions, ACTIONS)
+          onDebug('#actions.post')
+          onEvent()
+        })
+        .on('action.pre', function (repo, action) {
+          t.deepEqual(repo, REPO)
+          t.is(action, ACTIONS[0])
+          onDebug('#action.pre')
+          onEvent()
+        })
+        .on('action.post', function (repo, action, { stdout, stderr }) {
+          t.deepEqual(repo, REPO)
+          t.is(action, ACTIONS[0])
+          t.true(stdout.startsWith('done'))
+          t.falsy(stderr)
+          onDebug('#action.post')
+          onEvent()
+        })
+        .on('done', function (repo) {
+          t.deepEqual(repo, REPO)
+          onDebug('#done')
+          onEvent()
+        })
+    }),
+    mockRemote().then(function (status) {
+      t.is(status, 200)
+      onDebug('#Status: %d', status)
+    })
+  ])
 })
