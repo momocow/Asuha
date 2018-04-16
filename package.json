@@ -7,7 +7,8 @@
     "asuha": "bin/asuha.js"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "update": "git stash && git pull && git stash apply"
   },
   "repository": {
     "type": "git",
