@@ -30,11 +30,13 @@ const cwd = program.cwd || process.cwd()
 const asuha = Asuha.http()
 
 asuha.set({ cwd })
-if (!program.verbose) {
-  asuha.set('ondebug', function () {})
+if (program.verbose) {
+  asuha.on('debug', function (...args) {
+    console.debug('\u001b[90m[Debug] ' + args.shift() + '\u001b[39m', ...args)
+  })
 }
 
-const server = asuha.listen(port, host, function () {
-  const { port, address } = server.address()
+asuha.listen(port, host, function () {
+  const { port, address } = asuha.server.address()
   console.log('Asuha is listening at %s:%d', address, port)
 })
