@@ -1,9 +1,5 @@
-const test = require('ava')
-const { promisify } = require('util')
-const exec = promisify(require('child_process').exec)
 const path = require('path')
-const git = require('simple-git/promise')(path.join(__dirname, 'dummy'))
-const Asuha = require('..')
+const TEST_CWD = path.join(__dirname, 'dummy')
 
 const REPO = {
   fullname: 'momocow/dummy',
@@ -14,6 +10,12 @@ const REPO = {
 const ACTIONS = [
   'echo "done"'
 ]
+
+const test = require('ava')
+const { promisify } = require('util')
+const exec = promisify(require('child_process').exec)
+const git = require('simple-git/promise')(TEST_CWD)
+const Asuha = require('..')
 
 // const TIMEOUT = 10000
 
@@ -28,7 +30,7 @@ function onDebug (...args) {
 async function makeCommit () {
   onDebug('Start making commit')
 
-  const { stdout } = await exec('npm start')
+  const { stdout } = await exec('npm start', { cwd: TEST_CWD })
   const commitMsg = stdout
     .split('\n')
     .filter(function (line) {
