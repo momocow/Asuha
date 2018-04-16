@@ -1,6 +1,3 @@
-const path = require('path')
-const TEST_CWD = path.join(__dirname, 'dummy')
-
 const REPO = {
   fullname: 'momocow/dummy',
   event: 'repo:push',
@@ -11,13 +8,16 @@ const ACTIONS = [
   'echo "done"'
 ]
 
-const test = require('ava')
-const { promisify } = require('util')
-const exec = promisify(require('child_process').exec)
-const git = require('simple-git/promise')(TEST_CWD)
-const Asuha = require('..')
+const CONFIG = {
+  host: 'localhost',
+  port: 7766
+}
 
-// const TIMEOUT = 10000
+const test = require('ava')
+const { readFileSync } = require('fs')
+const { join } = require('path')
+const { request } = require('http')
+const Asuha = require('..')
 
 function onError (err) {
   console.error('\u001b[31m[Error] %O\u001b[39m', err)
@@ -27,24 +27,29 @@ function onDebug (...args) {
   console.debug('\u001b[90m[Debug] ' + args.shift() + '\u001b[39m', ...args)
 }
 
-async function makeCommit () {
-  onDebug('Start making commit')
-
-  const { stdout } = await exec('npm start', { cwd: TEST_CWD })
-  const commitMsg = stdout
-    .split('\n')
-    .filter(function (line) {
-      return line.includes('Test')
+function mockRemote () {
+  return new Promise(function (resolve, reject) {
+    const req = request({
+      protocol: 'http:',
+      hostname: CONFIG.host,
+      port: CONFIG.port,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Bitbucket-Webhooks/2.0',
+        'X-Event-Key': 'repo:push'
+      }
+    }, function (res) {
+      resolve(res.statusCode)
     })
-    .join('')
-    .replace('\n', '')
-    .trim()
 
-  await git.add('last-modified')
-  const { commit } = await git.commit(commitMsg)
-  await git.push()
+    req.on('error', function (err) {
+      reject(err)
+    })
 
-  return commit + ': ' + commitMsg
+    req.write(readFileSync(join(__dirname, 'fixture', 'payload.json'), 'utf8'))
+    req.end()
+  })
 }
 
 process.on('uncaughtException', function (err) {
@@ -59,22 +64,15 @@ const asuha = Asuha.http()
 test.before.cb(function (t) {
   onDebug('Start Asuha listening for remote git events')
   t.plan(0)
-  asuha.listen(7766, '0.0.0.0', function () {
+  asuha.listen(CONFIG.port, CONFIG.host, function () {
     const { port, address } = asuha.server.address()
     onDebug('Asuha is listening at %s:%d', address, port)
     t.end()
   })
 })
 
-test.before(async function (t) {
-  onDebug('Update test repository')
-
-  await git.checkout('master')
-  await git.pull()
-})
-
-test.cb('Asuha should report the following events in order: [remote, actions.pre, action.pre, action.post, actions.post, done]', function (t) {
-  t.plan(12)
+test.cb('Asuha should report the following events in order: [remote, actions.pre, action.pre, action.post, actions.post, done]', async function (t) {
+  t.plan(13)
   let assertCount = 0
   asuha
     .on('error', function (err) {
@@ -117,10 +115,9 @@ test.cb('Asuha should report the following events in order: [remote, actions.pre
       t.deepEqual(repo, REPO)
       assertCount += 1
       onDebug('#done <assert: %d>', assertCount)
-      t.end()
     })
 
-  makeCommit().then(function (result) {
-    onDebug('[Commit]\n    %s', result)
-  })
+  const status = await mockRemote()
+  t.is(status, 200)
+  t.end()
 })
