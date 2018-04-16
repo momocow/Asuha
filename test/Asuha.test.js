@@ -15,7 +15,7 @@ const ACTIONS = [
   'echo "done"'
 ]
 
-const TIMEOUT = 10000
+// const TIMEOUT = 10000
 
 function onError (err) {
   console.error('\u001b[31m[Error] %O\u001b[39m', err)
@@ -64,13 +64,13 @@ test.before(async function (t) {
   await git.pull()
 })
 
-test.beforeEach.cb(function (t) {
-  onDebug('Set timeout: ' + TIMEOUT + ' ms')
-  setTimeout(function () {
-    onDebug('Timeout!')
-    t.end()
-  }, TIMEOUT)
-})
+// test.beforeEach.cb(function (t) {
+//   onDebug('Set timeout: ' + TIMEOUT + ' ms')
+//   setTimeout(function () {
+//     onDebug('Timeout!')
+//     t.end()
+//   }, TIMEOUT)
+// })
 
 test.cb('Asuha should report the following events in order: [remote, actions.pre, action.pre, action.post, actions.post, done]', function (t) {
   t.plan(12)
