@@ -47,6 +47,10 @@ async function makeCommit () {
   return commit + ': ' + commitMsg
 }
 
+process.on('uncaughtException', function (err) {
+  onError(err)
+})
+
 const asuha = Asuha.http()
   .set('actions', ACTIONS)
   .on('debug', onDebug)
