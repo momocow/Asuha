@@ -53,6 +53,7 @@ process.on('uncaughtException', function (err) {
 
 const asuha = Asuha.http()
   .set('actions', ACTIONS)
+  .set('cwd', __dirname)
   .on('debug', onDebug)
 
 test.before.cb(function (t) {
