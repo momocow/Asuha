@@ -62,7 +62,7 @@ test.before.cb(function (t) {
 test.before(async function (t) {
   onDebug('Update test repository')
 
-  await git.checkoutLocalBranch('master')
+  await git.checkout('master')
   await git.pull()
 })
 
