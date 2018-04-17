@@ -1,11 +1,18 @@
 # Asuha
 Asuha: the Webhook server for online git hosting services.
 
+> WIP
+
+> Currently only support for Bitbucket. There are other great packages for Github (e.g. [probot](https://probot.github.io/)) that you can have a try ;)
+
 ![Chigusa Asuha chan][1]
 
 ## Installation
-- Install from Github with npm, `npm i momocow/Asuha`
+- Install from Github with npm, `npm i asuha`
+    - For CLI usage, `npm i asuha -g`
 - Set up dependencies, `npm install`
+    - Optional dependencies are `commander.js` and `express`, if in your use case, none of those above is required (i.e. you are not using as CLI command and you prefer builtin `http`/`https` server), you can install dependencies without them through
+    `npm install --no-optional`
 
 ## CLI
 > Document is WIP
@@ -42,7 +49,7 @@ Just like EventEmitter API, you can call this method with one parameter `event` 
     - `this` Asuha
 
 ### Configuration
-This is the default public configuration for Asuha. Use `Asuha#set()` to change the settings.
+This is the default public configuration for Asuha. Use [`Asuha#set()`](#setconfigobj) to change the settings.
 
 ```js
 {
@@ -61,11 +68,7 @@ This is the default public configuration for Asuha. Use `Asuha#set()` to change 
 
   /**
    * Pre-configured repository mappings with local path. See the example.
-   * @type {{
-   *   [repoHost: string]: {
-   *     [repoFullname: string]: string 
-   *   }
-   * }}
+   * @type {{ [repoHost: string]: { [repoFullname: string]: string } }}
    * @example {
    *    "github.com": {
    *      "momocow/Asuha": "/repo/asuha"
