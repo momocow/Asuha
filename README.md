@@ -20,9 +20,9 @@ Asuha: the Webhook server for online git hosting services.
 // use .set() to configure
 // use .on()/.once() to listen for Asuha events
 const asuha = Asuha.http()
-  .set('actions', ACTIONS)
+  .set('actions', [ 'git pull --rebase' ])
   .set('cwd', __dirname)
-  .on('debug', onDebug)
+  .on('debug', console.debug.bind(console))
   .listen(/* Same args as http.Server.listen() */ function () {
     const { port, address } = asuha.server.address() // http.Server.address()
     console.debug('Asuha is listening at %s:%d', address, port)
