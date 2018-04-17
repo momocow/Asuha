@@ -74,5 +74,5 @@ const asuha = Asuha.http()
 ```
 
 [1]: https://ru.myanimeshelf.com/upload/dynamic/2016-07/24/1375382.jpg
-[2]: 
+[2]: https://developer.github.com/webhooks
 [3]: https://confluence.atlassian.com/bitbucket/event-payloads-740262817.html
