@@ -16,21 +16,21 @@ The following events are listed in the order which they are fired when a remote 
 > Note that `action.pre` and `action.post` can be fired multiple times in pair according to the number of configured actions.
 
 - `remote`
-    - `repo` RepoMeta
+    - `repo` [RepoMeta](#repometa)
 - `actions.pre`
-    - `repo` RepoMeta
+    - `repo` [RepoMeta](#repometa)
     - `actions` string[]
 - `action.pre`
-    - `repo` RepoMeta
+    - `repo` [RepoMeta](#repometa)
     - `action` string
 - `action.post`
-    - `repo` RepoMeta
+    - `repo` [RepoMeta](#repometa)
     - `action` string
 - `actions.post`
-    - `repo` RepoMeta
+    - `repo` [RepoMeta](#repometa)
     - `actions` string[]
 - `done`
-    - `repo` RepoMeta
+    - `repo` [RepoMeta](#repometa)
 
 ### RepoMeta
 For all remote events, see [Github][2] or [Bitbucket][3] webhook doc for more info.
