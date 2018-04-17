@@ -66,7 +66,9 @@ This is the default public configuration for Asuha. Use [`Asuha#set()`](#setconf
   autoScan: true,
 
   /**
-   * @type {string|RegExp} defaults to ignore repository directories whose names start with '.' or '#'; you can use it to disable a repository
+   * default to ignore repository directories whose names start with '.' or '#';
+   * you can use it to disable a repository
+   * @type {string|RegExp}
    */
   match: /^[^.#].*$/,
 
