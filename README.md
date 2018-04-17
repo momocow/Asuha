@@ -11,6 +11,101 @@ Asuha: the Webhook server for online git hosting services.
 > Document is WIP
 
 ## API
+### Instance Method
+#### set(configObj)
+#### set(configKey, configValue)
+See [Configuration](#configuration) for available configs.
+- Parameters
+    - `configObj` object
+    - `configKey` string
+    - `configValue` any
+- Return
+    - `this` Asuha
+
+#### on(event, listener)
+#### once(event, listener)
+See [Events](#events) for available events and listener parameters.
+- Parameters
+    - `event` object
+    - `listener` Function
+- Return
+    - `this` Asuha
+
+#### off(event)
+#### off(event, listener)
+Just like EventEmitter API, you can call this method with one parameter `event` to remove all listeners related to this event or specified the listener as the second parameter.
+> **MUST** be called after `Asuha#listen()` has been called; otherwise, nothing happens.
+- Parameters
+    - `event` object
+    - `listener` Function
+- Return
+    - `this` Asuha
+
+### Configuration
+This is the default public configuration for Asuha. Use `Asuha#set()` to change the settings.
+
+```js
+{
+  cwd: process.cwd(),
+
+  /**
+   * Auto-scan the working directory to find local repositories.
+   * Local Repo Scanning Algorithm is described as below.
+   */
+  autoScan: true,
+
+  /**
+   * @type {string|RegExp} defaults to ignore repository directories whose names start with '.' or '#'; you can use it to disable a repository
+   */
+  match: /^[^.#].*$/,
+
+  /**
+   * Pre-configured repository mappings with local path. See the example.
+   * @type {{
+   *   [repoHost: string]: {
+   *     [repoFullname: string]: string 
+   *   }
+   * }}
+   * @example {
+   *    "github.com": {
+   *      "momocow/Asuha": "/repo/asuha"
+   *    }
+   * }
+   */
+  repoMappings: {},
+
+  /**
+   * Each element is first constructed to a RegExp
+   * then call its RegExp#test() to compare against the remote git event header.
+   * @type {Array(string|RegExp)}
+   */
+  subscribeEvents: [ 'push' ],
+
+  /**
+   * Commands executed in serial by child_process#exec()
+   * @type {string[]}
+   */
+  actions: [
+    'git pull'
+  ],
+
+  /**
+   * Stdio piping for each action
+   */
+  stdio: {
+    /**
+     * @type {Writable} 
+     */
+    stdout: process.stdout,
+
+    /**
+     * @type {Writable} 
+     */
+    stderr: process.stderr
+  }
+}
+```
+
 ### Events
 The following events are listed in the order which they are fired when a remote event is received.
 > Note that `action.pre` and `action.post` can be fired multiple times in pair according to the number of configured actions.

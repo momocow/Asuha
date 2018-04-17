@@ -17,8 +17,10 @@
   "keywords": [
     "git",
     "webhook",
-    "repo",
-    "push"
+    "repository",
+    "push",
+    "event",
+    "bitbucket"
   ],
   "author": "MomoCow",
   "license": "MIT",
@@ -28,8 +30,7 @@
   "homepage": "https://github.com/momocow/Asuha#readme",
   "optionalDependencies": {
     "commander": "^2.15.1",
-    "express": "^4.16.3",
-    "socket.io": "^2.1.0"
+    "express": "^4.16.3"
   },
   "devDependencies": {
     "ava": "^0.25.0",
