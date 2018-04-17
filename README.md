@@ -51,7 +51,22 @@ For all remote events, see [Github][2] or [Bitbucket][3] webhook doc for more in
    * the format of this field is host-specified
    * @example `push` for Github; `repo:push` for Bitbucket
    */
-  event: string
+  event: string,
+
+  /**
+   * @example [{
+   *  hash: '709d658dc5b6d6afcd46049c2f332ee3f515a67d',
+   *  author: 'username',
+   *  message: 'new commit message\n',
+   *  timestamp: new Date('2015-06-09T03:34:49+00:00'),
+   * }]
+   */
+  commits: {
+    hash: string
+    message: string,
+    author: string,
+    timestamp: Date
+  }[]
 }
 ```
 
