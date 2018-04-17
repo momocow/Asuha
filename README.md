@@ -38,22 +38,28 @@ For all remote events, see [Github][2] or [Bitbucket][3] webhook doc for more in
 ```typescript
 {
   /**
-   * @example `momocow/Asuha`
+   * @example 'Asuha'
+   */
+  name: string,
+
+  /**
+   * @example 'momocow/Asuha'
    */
   fullname: string,
 
   /**
-   * @example `momocow`
+   * @example 'momocow'
    */
   owner: string,
 
   /**
    * the format of this field is host-specified
-   * @example `push` for Github; `repo:push` for Bitbucket
+   * @example 'push' for Github; 'repo:push' for Bitbucket
    */
   event: string,
 
   /**
+   * Empty if the event is not a push event
    * @example [{
    *  hash: '709d658dc5b6d6afcd46049c2f332ee3f515a67d',
    *  author: 'username',
@@ -62,7 +68,7 @@ For all remote events, see [Github][2] or [Bitbucket][3] webhook doc for more in
    * }]
    */
   commits: {
-    hash: string
+    hash: string,
     message: string,
     author: string,
     timestamp: Date

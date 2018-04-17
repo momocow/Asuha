@@ -10,5 +10,10 @@
     },
     "type": "repository",
     "is_private": false
+  },
+  "push": {
+    "changes": {
+      "commits": []
+    }
   }
 }
