@@ -23,11 +23,10 @@ const asuha = Asuha.http()
   .set('actions', ACTIONS)
   .set('cwd', __dirname)
   .on('debug', onDebug)
-
-asuha.listen(/* Same args as http.Server.listen() */ function () {
-  const { port, address } = asuha.server.address() // http.Server.address()
-  console.debug('Asuha is listening at %s:%d', address, port)
-})
+  .listen(/* Same args as http.Server.listen() */ function () {
+    const { port, address } = asuha.server.address() // http.Server.address()
+    console.debug('Asuha is listening at %s:%d', address, port)
+  })
 ```
 
 [1]: https://ru.myanimeshelf.com/upload/dynamic/2016-07/24/1375382.jpg
