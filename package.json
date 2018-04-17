@@ -7,7 +7,7 @@
     "asuha": "bin/asuha.js"
   },
   "scripts": {
-    "test": "ava --timeout=10s",
+    "test": "ava --timeout=60s",
     "update": "git stash && git pull && git stash apply || echo 'Nothing to apply'"
   },
   "repository": {
@@ -46,7 +46,8 @@
     "ip": "^1.1.5",
     "ipware": "^1.0.0",
     "lodash.get": "^4.4.2",
-    "lodash.merge": "^4.6.1"
+    "lodash.merge": "^4.6.1",
+    "lodash.set": "^4.3.2"
   },
   "ava": {
     "files": [

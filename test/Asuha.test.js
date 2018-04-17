@@ -1,7 +1,14 @@
 const REPO = {
+  name: 'Dummy',
   fullname: 'momocow/dummy',
   event: 'repo:push',
-  owner: 'momocow'
+  owner: 'momocow',
+  commits: [{
+    hash: '4046c77a57e94b157d47ae0dd23574c657141579',
+    message: 'msg',
+    author: 'momocow <momocow.me@gmail.com>',
+    timestamp: new Date('2018-04-16T08:33:08+00:00')
+  }]
 }
 
 const ACTIONS = [
@@ -12,6 +19,8 @@ const CONFIG = {
   host: 'localhost',
   port: 7766
 }
+
+const { name } = require('../package.json')
 
 const test = require('ava')
 const { readFileSync, mkdirSync, existsSync, writeFileSync } = require('fs')
@@ -24,7 +33,10 @@ function onError (err) {
 }
 
 function onDebug (...args) {
-  console.debug('\u001b[90m[Debug] ' + args.shift() + '\u001b[39m', ...args)
+  // enable debug mode in DEBUG env variable
+  if (process.env.DEBUG && new RegExp(process.env.DEBUG.replace('*', '.*')).test(name)) {
+    console.debug('\u001b[90m[Debug] ' + args.shift() + '\u001b[39m', ...args)
+  }
 }
 
 function mockRemote () {
@@ -59,6 +71,7 @@ process.on('uncaughtException', function (err) {
 const asuha = Asuha.http()
   .set('actions', ACTIONS)
   .set('cwd', __dirname)
+  .set('stdio.stdout', null)
   .set('whitelistIPs', true) // allow all ips (since we mock the Bitbucket webhook payload from localhost)
   .on('debug', onDebug)
 

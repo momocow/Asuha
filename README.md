@@ -1,6 +1,10 @@
 # Asuha
 Asuha: the Webhook server for online git hosting services.
 
+![travis](https://travis-ci.org/momocow/Asuha.svg?branch=master)
+[![npm](https://img.shields.io/npm/dt/asuha.svg)](https://www.npmjs.com/package/asuha)
+[![npm](https://img.shields.io/npm/v/asuha.svg)](https://www.npmjs.com/package/asuha)
+
 > WIP
 
 > Currently only support for Bitbucket. There are other great packages for Github (e.g. [probot](https://probot.github.io/)) that you can have a try ;)
@@ -160,7 +164,7 @@ For all remote events, see [Github][2] or [Bitbucket][3] webhook doc for more in
    * Empty if the event is not a push event
    * @example [{
    *  hash: '709d658dc5b6d6afcd46049c2f332ee3f515a67d',
-   *  author: 'username',
+   *  author: 'momocow <momocow.me@gmail.com>', // host-specified!
    *  message: 'new commit message\n',
    *  timestamp: new Date('2015-06-09T03:34:49+00:00'),
    * }]
