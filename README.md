@@ -31,7 +31,7 @@ See [Configuration](#configuration) for available configs.
     - `configKey` string
     - `configValue` any
 - Return
-    - `this` Asuha
+    - this
 
 #### on(event, listener)
 #### once(event, listener)
@@ -40,7 +40,7 @@ See [Events](#events) for available events and listener parameters.
     - `event` object
     - `listener` Function
 - Return
-    - `this` Asuha
+    - this
 
 #### off(event)
 #### off(event, listener)
@@ -50,7 +50,32 @@ Just like EventEmitter API, you can call this method with one parameter `event` 
     - `event` object
     - `listener` Function
 - Return
-    - `this` Asuha
+    - this
+
+### Static Method
+#### http()
+Creating a http server with Asuha as the request handler.
+  - Return
+    - Asuha
+
+#### https(httpsOptions)
+Creating a https server with Asuha as the request handler.
+  - Parameters
+    - `httpsOptions` object
+        > Same as options for [https.createServer()][4]
+  - Return
+    - Asuha
+
+#### express()
+#### express(app)
+> Optional dependencies `express` is required!
+
+Creating an express server with Asuha as an express middleware. You can pass your custom express app as the first argument.
+
+- Parameters
+  - `app` express.Application
+- Return
+  - Asuha
 
 ### Configuration
 This is the default public configuration for Asuha. Use [`Asuha#set()`](#setconfigobj) to change the settings.
@@ -201,3 +226,4 @@ const asuha = Asuha.http()
 [1]: https://ru.myanimeshelf.com/upload/dynamic/2016-07/24/1375382.jpg
 [2]: https://developer.github.com/webhooks
 [3]: https://confluence.atlassian.com/bitbucket/event-payloads-740262817.html
+[4]: (https://nodejs.org/api/https.html#https_https_createserver_options_requestlistener)
