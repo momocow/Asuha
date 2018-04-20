@@ -18,7 +18,6 @@ const REPO_PATH = join(__dirname, 'fixture')
 const ACTIONS = [
   'echo done'
 ]
-
 const CONFIG = {
   host: 'localhost',
   port: 7766
@@ -185,10 +184,10 @@ test(`Asuha should report the following events in order: [
           onEvent()
         })
     }),
+    asuhaListen(),
     mockRemote().then(function (status) {
       t.is(status, 200)
       onDebug('#Status: %d', status)
-    }),
-    asuhaListen()
+    })
   ])
 })
