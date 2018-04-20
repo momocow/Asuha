@@ -149,15 +149,19 @@ The following events are listed in the order which they are fired when a remote 
 - `actions.pre`
     - `repo` [RepoMeta](#repometa)
     - `actions` string[]
+    - `repoPath` string
 - `action.pre`
     - `repo` [RepoMeta](#repometa)
     - `action` string
+    - `repoPath` string
 - `action.post`
     - `repo` [RepoMeta](#repometa)
     - `action` string
+    - `repoPath` string
 - `actions.post`
     - `repo` [RepoMeta](#repometa)
     - `actions` string[]
+    - `repoPath` string
 - `done`
     - `repo` [RepoMeta](#repometa)
 
