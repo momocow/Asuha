@@ -33,9 +33,22 @@ See [Configuration](#configuration) for available configs.
 - Return
     - this
 
+#### listen(...args)
+It is an alias for [net.Server#listen()][5]. Read the document from Node official for information about parameters.
+- Return
+    - this
+
+#### close(cb)
+- Parameters
+    - `cb` Function
+- Return
+    - this
+
 #### on(event, listener)
 #### once(event, listener)
 See [Events](#events) for available events and listener parameters.
+> Note that listener can be either a normal function or an async function (or a function with `Promise` return type). Asuha adopts [`await-event-emitter`][6] as her event handling system; therefore, listeners are executed one by one in the order they were defined.
+
 - Parameters
     - `event` object
     - `listener` Function
@@ -234,4 +247,6 @@ const asuha = Asuha.http()
 [1]: https://ru.myanimeshelf.com/upload/dynamic/2016-07/24/1375382.jpg
 [2]: https://developer.github.com/webhooks
 [3]: https://confluence.atlassian.com/bitbucket/event-payloads-740262817.html
-[4]: (https://nodejs.org/api/https.html#https_https_createserver_options_requestlistener)
+[4]: https://nodejs.org/api/https.html#https_https_createserver_options_requestlistener
+[5]: https://nodejs.org/api/net.html#net_server_listen
+[6]: https://github.com/imcuttle/node-await-event-emitter

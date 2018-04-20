@@ -28,6 +28,7 @@ const { name } = require('../package.json')
 const test = require('ava')
 const { readFileSync, mkdirSync, existsSync, writeFileSync } = require('fs')
 const { request } = require('http')
+const { setTimeout } = require('../util/timer')
 const Asuha = require('..')
 
 function onError (err) {
@@ -99,6 +100,13 @@ test.before(function (t) {
   }
 })
 
+test.afterEach.cb(function (t) {
+  t.plan(0)
+  asuha.close(function () {
+    t.end()
+  })
+})
+
 test(`Asuha should report the following events in order: [
   "init",
   "remote",
@@ -108,86 +116,82 @@ test(`Asuha should report the following events in order: [
   "actions.post",
   "done"
 ]`, function (t) {
-  return Promise.all([
-    new Promise(function (resolve, reject) {
-      let eventCount = 0
+  return Promise.resolve((function () {
+    asuha
+      .on('error', function (err) {
+        onError(err)
+        t.fail('Unexpected error occurs.')
+      })
+      .on('init', function (repoPath, fullname, host) {
+        t.is(repoPath, REPO_PATH)
+        t.is(fullname, REPO.fullname)
+        t.is(host, 'bitbucket.org')
+        onDebug('#init')
+      })
+      .on('remote', function (repo) {
+        t.deepEqual(repo, REPO)
+        onDebug('#remote')
+      })
+      .on('actions.pre', function (repo, actions, repoPath) {
+        t.deepEqual(repo, REPO)
+        t.deepEqual(actions, ACTIONS)
+        t.is(repoPath, REPO_PATH)
+        onDebug('#actions.pre')
+      })
+      .on('actions.post', function (repo, actions, repoPath) {
+        t.deepEqual(repo, REPO)
+        t.deepEqual(actions, ACTIONS)
+        t.is(repoPath, REPO_PATH)
+        onDebug('#actions.post')
+      })
+      .on('action.pre', function (repo, action, repoPath) {
+        t.deepEqual(repo, REPO)
+        t.is(action, ACTIONS[0])
+        t.is(repoPath, REPO_PATH)
+        onDebug('#action.pre')
+      })
+      .on('action.post', function (repo, action, repoPath, { stdout, stderr }) {
+        t.deepEqual(repo, REPO)
+        t.is(action, ACTIONS[0])
+        t.is(repoPath, REPO_PATH)
+        t.true(stdout.startsWith('done'))
+        t.falsy(stderr)
+        onDebug('#action.post')
+      })
+      .on('done', function (repo) {
+        t.deepEqual(repo, REPO)
+        onDebug('#done')
+      })
+  })()).then(function () {
+    return asuhaListen()
+  }).then(function () {
+    return mockRemote()
+  }).then(function (status) {
+    t.is(status, 200)
+    onDebug('#Status: %d', status)
+  })
+})
 
-      const onEvent = function () {
-        eventCount++
-        /**
-         * 1 (init event) x 1 (local repo) = 1 (event)
-         * 1 (remote event) x 1 (remote git event) = 1 (event)
-         * 1 (actions.pre event) x 1 (remote git event) = 1 (event)
-         * 1 (action.pre event) x 1 (remote git event) x 1 (action) = 1 (event)
-         * 1 (action.post event) x 1 (remote git event) x 1 (action) = 1 (event)
-         * 1 (actions.post event) x 1 (remote git event) = 1 (event)
-         * 1 (done event) x 1 (remote git event) = 1 (event)
-         *
-         * tatal = 7 events
-         */
-        if (eventCount === 7) {
-          resolve()
-        }
-      }
+test.cb('Async listeners should be executed in the order they were defined.', function (t) {
+  t.plan(2)
 
-      asuha
-        .on('error', function (err) {
-          onError(err)
-          t.fail('Unexpected error occurs.')
-          reject(err)
-        })
-        .on('init', function (repoPath, fullname, host) {
-          t.is(repoPath, REPO_PATH)
-          t.is(fullname, REPO.fullname)
-          t.is(host, 'bitbucket.org')
-          onDebug('#init')
-          onEvent()
-        })
-        .on('remote', function (repo) {
-          t.deepEqual(repo, REPO)
-          onDebug('#remote')
-          onEvent()
-        })
-        .on('actions.pre', function (repo, actions, repoPath) {
-          t.deepEqual(repo, REPO)
-          t.deepEqual(actions, ACTIONS)
-          t.is(repoPath, REPO_PATH)
-          onDebug('#actions.pre')
-          onEvent()
-        })
-        .on('actions.post', function (repo, actions, repoPath) {
-          t.deepEqual(repo, REPO)
-          t.deepEqual(actions, ACTIONS)
-          t.is(repoPath, REPO_PATH)
-          onDebug('#actions.post')
-          onEvent()
-        })
-        .on('action.pre', function (repo, action, repoPath) {
-          t.deepEqual(repo, REPO)
-          t.is(action, ACTIONS[0])
-          t.is(repoPath, REPO_PATH)
-          onDebug('#action.pre')
-          onEvent()
-        })
-        .on('action.post', function (repo, action, repoPath, { stdout, stderr }) {
-          t.deepEqual(repo, REPO)
-          t.is(action, ACTIONS[0])
-          t.is(repoPath, REPO_PATH)
-          t.true(stdout.startsWith('done'))
-          t.falsy(stderr)
-          onDebug('#action.post')
-          onEvent()
-        })
-        .on('done', function (repo) {
-          t.deepEqual(repo, REPO)
-          onDebug('#done')
-          onEvent()
-        })
-    }),
-    asuhaListen(),
-    mockRemote().then(function (status) {
-      t.is(status, 200)
-      onDebug('#Status: %d', status)
+  const ret = []
+  const start = Date.now()
+  asuha.on('init', async function () {
+    ret.push(await setTimeout(() => 1, 2000))
+    onDebug('Init event #1: %d ms', Date.now() - start)
+  })
+    .on('init', function () {
+      ret.push(2)
+      onDebug('Init event #2: %d ms', Date.now() - start)
     })
-  ])
+    .on('init', async function () {
+      ret.push(await setTimeout(() => 3, 3000))
+      onDebug('Init event #3: %d ms', Date.now() - start)
+    })
+    .listen(function () {
+      t.deepEqual(ret, [ 1, 2, 3 ])
+      t.true((Date.now() - start) > 5000)
+      t.end()
+    })
 })
