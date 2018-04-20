@@ -244,6 +244,28 @@ const asuha = Asuha.http()
   })
 ```
 
+2. Using async listeners for Asuha
+
+```javascript
+// metrics
+const ret = []
+const start = Date.now()
+
+asuha.on('init', async function () {
+    ret.push(await setTimeout(() => 1, 2000))
+})
+    .on('init', function () {
+        ret.push(2)
+    })
+    .on('init', async function () {
+        ret.push(await setTimeout(() => 3, 3000))
+    })
+    .listen(function () {
+        // ret.join('') === '123' 
+        // Date.now() - start >= 5000
+    })
+```
+
 [1]: https://ru.myanimeshelf.com/upload/dynamic/2016-07/24/1375382.jpg
 [2]: https://developer.github.com/webhooks
 [3]: https://confluence.atlassian.com/bitbucket/event-payloads-740262817.html
