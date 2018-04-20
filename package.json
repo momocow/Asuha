@@ -7,7 +7,7 @@
     "asuha": "bin/asuha.js"
   },
   "scripts": {
-    "test": "ava --timeout=60s",
+    "test": "ava --timeout=30s",
     "update": "git stash && git pull && git stash apply || echo 'Nothing to apply'"
   },
   "repository": {

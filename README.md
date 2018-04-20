@@ -144,6 +144,10 @@ This is the default public configuration for Asuha. Use [`Asuha#set()`](#setconf
 The following events are listed in the order which they are fired when a remote event is received.
 > Note that `action.pre` and `action.post` can be fired multiple times in pair according to the number of configured actions.
 
+- `init` fired only once after Asuha#init() called
+    - `repoPath` string
+    - `repoFullname` string
+    - `host` string
 - `remote`
     - `repo` [RepoMeta](#repometa)
 - `actions.pre`

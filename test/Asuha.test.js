@@ -1,3 +1,5 @@
+const { join } = require('path')
+
 const REPO = {
   name: 'Dummy',
   fullname: 'momocow/dummy',
@@ -10,6 +12,8 @@ const REPO = {
     timestamp: new Date('2018-04-16T08:33:08+00:00')
   }]
 }
+
+const REPO_PATH = join(__dirname, 'fixture')
 
 const ACTIONS = [
   'echo done'
@@ -24,7 +28,6 @@ const { name } = require('../package.json')
 
 const test = require('ava')
 const { readFileSync, mkdirSync, existsSync, writeFileSync } = require('fs')
-const { join } = require('path')
 const { request } = require('http')
 const Asuha = require('..')
 
@@ -64,6 +67,17 @@ function mockRemote () {
   })
 }
 
+function asuhaListen () {
+  return new Promise(function (resolve) {
+    onDebug('Start Asuha listening for remote git events')
+    asuha.listen(CONFIG.port, CONFIG.host, function () {
+      const { port, address } = asuha.server.address()
+      onDebug('Asuha is listening at %s:%d', address, port)
+      resolve()
+    })
+  })
+}
+
 process.on('uncaughtException', function (err) {
   onError(err)
 })
@@ -86,17 +100,8 @@ test.before(function (t) {
   }
 })
 
-test.before.cb(function (t) {
-  onDebug('Start Asuha listening for remote git events')
-  t.plan(0)
-  asuha.listen(CONFIG.port, CONFIG.host, function () {
-    const { port, address } = asuha.server.address()
-    onDebug('Asuha is listening at %s:%d', address, port)
-    t.end()
-  })
-})
-
 test(`Asuha should report the following events in order: [
+  "init",
   "remote",
   "actions.pre",
   "action.pre",
@@ -110,7 +115,18 @@ test(`Asuha should report the following events in order: [
 
       const onEvent = function () {
         eventCount++
-        if (eventCount === 6) {
+        /**
+         * 1 (init event) x 1 (local repo) = 1 (event)
+         * 1 (remote event) x 1 (remote git event) = 1 (event)
+         * 1 (actions.pre event) x 1 (remote git event) = 1 (event)
+         * 1 (action.pre event) x 1 (remote git event) x 1 (action) = 1 (event)
+         * 1 (action.post event) x 1 (remote git event) x 1 (action) = 1 (event)
+         * 1 (actions.post event) x 1 (remote git event) = 1 (event)
+         * 1 (done event) x 1 (remote git event) = 1 (event)
+         *
+         * tatal = 7 events
+         */
+        if (eventCount === 7) {
           resolve()
         }
       }
@@ -121,32 +137,43 @@ test(`Asuha should report the following events in order: [
           t.fail('Unexpected error occurs.')
           reject(err)
         })
+        .on('init', function (repoPath, fullname, host) {
+          t.is(repoPath, REPO_PATH)
+          t.is(fullname, REPO.fullname)
+          t.is(host, 'bitbucket.org')
+          onDebug('#init')
+          onEvent()
+        })
         .on('remote', function (repo) {
           t.deepEqual(repo, REPO)
           onDebug('#remote')
           onEvent()
         })
-        .on('actions.pre', function (repo, actions) {
+        .on('actions.pre', function (repo, actions, repoPath) {
           t.deepEqual(repo, REPO)
           t.deepEqual(actions, ACTIONS)
+          t.is(repoPath, REPO_PATH)
           onDebug('#actions.pre')
           onEvent()
         })
-        .on('actions.post', function (repo, actions) {
+        .on('actions.post', function (repo, actions, repoPath) {
           t.deepEqual(repo, REPO)
           t.deepEqual(actions, ACTIONS)
+          t.is(repoPath, REPO_PATH)
           onDebug('#actions.post')
           onEvent()
         })
-        .on('action.pre', function (repo, action) {
+        .on('action.pre', function (repo, action, repoPath) {
           t.deepEqual(repo, REPO)
           t.is(action, ACTIONS[0])
+          t.is(repoPath, REPO_PATH)
           onDebug('#action.pre')
           onEvent()
         })
-        .on('action.post', function (repo, action, { stdout, stderr }) {
+        .on('action.post', function (repo, action, repoPath, { stdout, stderr }) {
           t.deepEqual(repo, REPO)
           t.is(action, ACTIONS[0])
+          t.is(repoPath, REPO_PATH)
           t.true(stdout.startsWith('done'))
           t.falsy(stderr)
           onDebug('#action.post')
@@ -161,6 +188,7 @@ test(`Asuha should report the following events in order: [
     mockRemote().then(function (status) {
       t.is(status, 200)
       onDebug('#Status: %d', status)
-    })
+    }),
+    asuhaListen()
   ])
 })
