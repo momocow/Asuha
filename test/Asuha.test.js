@@ -197,8 +197,21 @@ test.cb('Async listeners should be executed in the order they were defined.', fu
     })
 })
 
-test('Asuha#claim() should claim the repository and listen for its remote Git events.', function (t) {
-  t.context.asuha.set('autoScan', false)
+test(`Asuha#claim() should
+claim the repository,
+emit 'claim' and 'init' event in order,
+and listen for remote Git events of the repository.`, function (t) {
+  t.plan(3)
+
+  let claimed = false
+  t.context.asuha
+    .set('autoScan', false)
+    .on('claim', function () {
+      t.pass()
+      claimed = true
+    }).on('init', function () {
+      t.true(claimed)
+    })
 
   return Promise.resolve().then(function () {
     return asuhaListen(t.context.asuha, 7767)

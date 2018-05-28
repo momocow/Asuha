@@ -45,7 +45,7 @@ It is an alias for [net.Server#listen()][5]. Read the document from Node officia
     - this
 
 #### claim(repoPath)
-Claim the existing repository at the local path `repoPath`.
+Claim the existing repository at the local path `repoPath`. This will fire `claim` and `init` events in order.
 - Parameters
     - `repoPath` string
 
@@ -171,6 +171,14 @@ The following events are listed in the order which they are fired when a remote 
 > Note that `action.pre` and `action.post` can be fired multiple times in pair according to the number of configured actions.
 
 - `init` fired only once after Asuha#init() called
+    - `repoPath` string
+    - `repoFullname` string
+    - `host` string
+- `claim` fired when a repository is claimed before an `init` event is fired
+    - `repoPath` string
+    - `repoFullname` string
+    - `host` string
+- `disclaim` fired when a repository is disclaimed
     - `repoPath` string
     - `repoFullname` string
     - `host` string
