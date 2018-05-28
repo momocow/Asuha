@@ -44,6 +44,19 @@ It is an alias for [net.Server#listen()][5]. Read the document from Node officia
 - Return
     - this
 
+#### claim(repoPath)
+Claim the existing repository at the local path `repoPath`.
+- Parameters
+    - `repoPath` string
+
+#### disclaim(repoPath)
+#### disclaim(repoHost, repoFullname)
+Disclaim a repository specified by the `repoPath` or [ `repoHost`, `repoFullname` ] pair.
+- Parameters
+    - `repoPath` string
+    - `repoHost` string
+    - `repoFullname` string
+
 #### on(event, listener)
 #### once(event, listener)
 See [Events](#events) for available events and listener parameters.
