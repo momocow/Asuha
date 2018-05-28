@@ -19,8 +19,7 @@ const ACTIONS = [
   'echo done'
 ]
 const CONFIG = {
-  host: 'localhost',
-  port: 7766
+  host: 'localhost'
 }
 
 const { name } = require('../package.json')
@@ -42,12 +41,12 @@ function onDebug (...args) {
   }
 }
 
-function mockRemote () {
+function mockRemote (port) {
   return new Promise(function (resolve, reject) {
     const req = request({
       protocol: 'http:',
       hostname: CONFIG.host,
-      port: CONFIG.port,
+      port: port,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -67,10 +66,10 @@ function mockRemote () {
   })
 }
 
-function asuhaListen () {
+function asuhaListen (asuha, port) {
   return new Promise(function (resolve) {
     onDebug('Start Asuha listening for remote git events')
-    asuha.listen(CONFIG.port, CONFIG.host, function () {
+    asuha.listen(port, CONFIG.host, function () {
       const { port, address } = asuha.server.address()
       onDebug('Asuha is listening at %s:%d', address, port)
       resolve()
@@ -81,13 +80,6 @@ function asuhaListen () {
 process.on('uncaughtException', function (err) {
   onError(err)
 })
-
-const asuha = Asuha.http()
-  .set('actions', ACTIONS)
-  .set('cwd', __dirname)
-  .set('stdio.stdout', null)
-  .set('whitelistIPs', true) // allow all ips (since we mock the Bitbucket webhook payload from localhost)
-  .on('debug', onDebug)
 
 test.before(function (t) {
   const dotGit = join(__dirname, 'fixture', '.git')
@@ -100,9 +92,18 @@ test.before(function (t) {
   }
 })
 
+test.beforeEach(function (t) {
+  t.context.asuha = Asuha.http()
+    .set('actions', ACTIONS)
+    .set('cwd', __dirname)
+    .set('stdio.stdout', null)
+    .set('whitelistIPs', true) // allow all ips (since we mock the Bitbucket webhook payload from localhost)
+    .on('debug', onDebug)
+})
+
 test.afterEach.cb(function (t) {
   t.plan(0)
-  asuha.close(function () {
+  t.context.asuha.close(function () {
     t.end()
   })
 })
@@ -117,7 +118,7 @@ test(`Asuha should report the following events in order: [
   "done"
 ]`, function (t) {
   return Promise.resolve((function () {
-    asuha
+    t.context.asuha
       .on('error', function (err) {
         onError(err)
         t.fail('Unexpected error occurs.')
@@ -163,9 +164,9 @@ test(`Asuha should report the following events in order: [
         onDebug('#done')
       })
   })()).then(function () {
-    return asuhaListen()
+    return asuhaListen(t.context.asuha, 7766)
   }).then(function () {
-    return mockRemote()
+    return mockRemote(7766)
   }).then(function (status) {
     t.is(status, 200)
     onDebug('#Status: %d', status)
@@ -177,7 +178,7 @@ test.cb('Async listeners should be executed in the order they were defined.', fu
 
   const ret = []
   const start = Date.now()
-  asuha.on('init', async function () {
+  t.context.asuha.on('init', async function () {
     ret.push(await setTimeout(() => 1, 2000))
     onDebug('Init event #1: %d ms', Date.now() - start)
   })
@@ -194,4 +195,19 @@ test.cb('Async listeners should be executed in the order they were defined.', fu
       t.true((Date.now() - start) > 5000)
       t.end()
     })
+})
+
+test('Asuha#claim() should claim the repository and listen for its remote Git events.', function (t) {
+  t.context.asuha.set('autoScan', false)
+
+  return Promise.resolve().then(function () {
+    return asuhaListen(t.context.asuha, 7767)
+  }).then(function () {
+    t.context.asuha.claim(join(__dirname, 'fixture'))
+  }).then(function () {
+    return mockRemote(7767)
+  }).then(function (status) {
+    t.is(status, 200)
+    onDebug('#Status: %d', status)
+  })
 })
