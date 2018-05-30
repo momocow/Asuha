@@ -2,6 +2,7 @@ const { join } = require('path')
 
 const REPO = {
   name: 'Dummy',
+  host: 'bitbucket.org',
   fullname: 'momocow/dummy',
   event: 'repo:push',
   owner: 'momocow',
