@@ -209,6 +209,11 @@ For all remote events, see [Github][2] or [Bitbucket][3] webhook doc for more in
 ```typescript
 {
   /**
+   * @example 'bitbucket.org'
+   */
+  host: string,
+
+  /**
    * @example 'Asuha'
    */
   name: string,
