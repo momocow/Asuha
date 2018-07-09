@@ -48,6 +48,8 @@ It is an alias for [net.Server#listen()][5]. Read the document from Node officia
 Claim the existing repository at the local path `repoPath`. This will fire `claim` and `init` events in order.
 - Parameters
     - `repoPath` string
+- Return
+    - Promise<void>
 
 #### disclaim(repoPath)
 #### disclaim(repoHost, repoFullname)
@@ -56,6 +58,8 @@ Disclaim a repository specified by the `repoPath` or [ `repoHost`, `repoFullname
     - `repoPath` string
     - `repoHost` string
     - `repoFullname` string
+- Return
+    - Promise<void>
 
 #### on(event, listener)
 #### once(event, listener)

@@ -42,7 +42,7 @@ function onDebug (...args) {
   }
 }
 
-function mockRemote (port) {
+function mockRemote (port, headers = {}) {
   return new Promise(function (resolve, reject) {
     const req = request({
       protocol: 'http:',
@@ -50,6 +50,7 @@ function mockRemote (port) {
       port: port,
       method: 'POST',
       headers: {
+        ...headers,
         'Content-Type': 'application/json',
         'User-Agent': 'Bitbucket-Webhooks/2.0',
         'X-Event-Key': 'repo:push'
@@ -118,6 +119,7 @@ test(`Asuha should report the following events in order: [
   "actions.post",
   "done"
 ]`, function (t) {
+  onDebug('Event test:')
   return Promise.resolve((function () {
     t.context.asuha
       .on('error', function (err) {
@@ -175,6 +177,7 @@ test(`Asuha should report the following events in order: [
 })
 
 test.cb('Async listeners should be executed in the order they were defined.', function (t) {
+  onDebug('Init listeners test:')
   t.plan(2)
 
   const ret = []
@@ -202,6 +205,7 @@ test(`Asuha#claim() should
 claim the repository,
 emit 'claim' and 'init' event in order,
 and listen for remote Git events of the repository.`, function (t) {
+  onDebug('Claim test:')
   t.plan(3)
 
   let claimed = false
@@ -214,14 +218,13 @@ and listen for remote Git events of the repository.`, function (t) {
       t.true(claimed)
     })
 
-  return Promise.resolve().then(function () {
-    return asuhaListen(t.context.asuha, 7767)
-  }).then(function () {
-    t.context.asuha.claim(join(__dirname, 'fixture'))
-  }).then(function () {
-    return mockRemote(7767)
-  }).then(function (status) {
-    t.is(status, 200)
-    onDebug('#Status: %d', status)
-  })
+  return asuhaListen(t.context.asuha, 7767)
+    .then(function () {
+      return t.context.asuha.claim(join(__dirname, 'fixture'))
+    }).then(function () {
+      return mockRemote(7767)
+    }).then(function (status) {
+      t.is(status, 200)
+      onDebug('#Status: %d', status)
+    })
 })
