@@ -22,7 +22,7 @@ npm install asuha
 const Asuha = require('asuha')
 
 const asuha = Asuha.http()
-  .addUrl('git@github.com:momocow/Asuha.git)
+  .addUrl('git@github.com:momocow/Asuha.git')
   .listen(function () {
     const { address, port } = asuha.server().address()
     console.log('Asuha is listening on %s:%d', address, port)
