@@ -30,3 +30,5 @@ const asuha = Asuha.http()
 ```
 
 Then set the repository's webhook to where the Asuha server is listening on and make a Git push to the remote repository to test the server.
+
+[1]: https://ru.myanimeshelf.com/upload/dynamic/2016-07/24/1375382.jpg
