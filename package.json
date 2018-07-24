@@ -1,6 +1,6 @@
 {
   "name": "asuha",
-  "version": "1.5.5-alpha.4",
+  "version": "2.0.0",
   "description": "Asuha: the Webhook server for online git hosting services.",
   "main": "index.js",
   "scripts": {
