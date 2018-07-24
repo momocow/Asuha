@@ -14,9 +14,19 @@ test('Asuha#addRepo(https_url): by HTTPS URL', function (t) {
 })
 
 test('Asuha#addRepo(ssh_url): by SSH URL', function (t) {
-  t.plan(2)
+  t.plan(3)
   const asuha = new Asuha()
   asuha.addRepo(SSH_URL)
   t.true(asuha._repoMap.has('github.com'))
   t.true(asuha._repoMap.get('github.com').has('momocow/Asuha'))
+  t.deepEqual(asuha._repoMap.get('github.com').get('momocow/Asuha'), [ 'push' ])
+})
+
+test('Asuha#addRepo(ssh_url, options): by SSH URL', function (t) {
+  t.plan(3)
+  const asuha = new Asuha()
+  asuha.addRepo(SSH_URL, { subscribedEvents: true })
+  t.true(asuha._repoMap.has('github.com'))
+  t.true(asuha._repoMap.get('github.com').has('momocow/Asuha'))
+  t.is(asuha._repoMap.get('github.com').get('momocow/Asuha'), true)
 })
