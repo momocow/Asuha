@@ -11,6 +11,9 @@ Asuha: the Webhook server for online git hosting services.
 
 ![Chigusa Asuha chan][1]
 
+## Base Concepts
+- Asuha is designed as a module to report remote Git events through EventEmitter API.
+
 ## Installation
 ```
 npm install asuha
@@ -22,7 +25,7 @@ npm install asuha
 const Asuha = require('asuha')
 
 const asuha = Asuha.http()
-  .addUrl('git@github.com:momocow/Asuha.git')
+  .addRepo('git@github.com:momocow/Asuha.git')
   .listen(function () {
     const { address, port } = asuha.server().address()
     console.log('Asuha is listening on %s:%d', address, port)

@@ -142,7 +142,7 @@ This is the default public configuration for Asuha. Use [`Asuha#set()`](#setconf
    * then call its RegExp#test() to compare against the remote git event header.
    * @type {Array(string|RegExp)}
    */
-  subscribeEvents: [ 'push' ],
+  subscribedEvents: [ 'push' ],
 
   /**
    * Commands executed in serial by child_process#exec()
