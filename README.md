@@ -25,7 +25,8 @@ npm install asuha
 const Asuha = require('asuha')
 
 const asuha = Asuha.http()
-  .addRepo('git@github.com:momocow/Asuha.git')
+  .addHost('bitbucket') // github.com not implemented
+  .addRepo('git@bitbucket.org:momocow/Asuha.git')
   .listen(function () {
     const { address, port } = asuha.server().address()
     console.log('Asuha is listening on %s:%d', address, port)
