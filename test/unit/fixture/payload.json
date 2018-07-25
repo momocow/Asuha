@@ -1,0 +1,27 @@
+{
+  "repository": {
+    "scm": "git",
+    "name": "Dummy",
+    "full_name": "momocow/dummy",
+    "owner": {
+      "username": "momocow",
+      "type": "user",
+      "display_name": "momocow"
+    },
+    "type": "repository",
+    "is_private": false
+  },
+  "push": {
+    "changes": {
+      "commits": [{
+        "hash": "4046c77a57e94b157d47ae0dd23574c657141579",
+        "message": "msg",
+        "author": {
+          "raw": "momocow <momocow.me@gmail.com>",
+          "type": "author"
+        },
+        "date": "2018-04-16T08:33:08+00:00"
+      }]
+    }
+  }
+}
