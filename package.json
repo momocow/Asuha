@@ -4,8 +4,7 @@
   "description": "Asuha: the Webhook server for online git hosting services.",
   "main": "index.js",
   "scripts": {
-    "test": "ava test/*/*.test.js",
-    "update": "git stash && git pull && git stash apply || echo 'Nothing to apply'"
+    "test": "nyc ava test/*/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -32,6 +31,7 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
+    "nyc": "^12.0.2",
     "proxyquire": "^2.0.1",
     "sinon": "^6.1.4",
     "supertest": "^3.1.0"
@@ -41,5 +41,13 @@
     "callable-instance": "^1.0.0",
     "ip": "^1.1.5",
     "ipware": "^1.0.0"
+  },
+  "nyc": {
+    "include": [
+      "lib/**/*.js"
+    ],
+    "exclude": [
+      "lib/utils.js"
+    ]
   }
 }
