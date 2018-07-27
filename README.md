@@ -27,6 +27,9 @@ const Asuha = require('asuha')
 
 const asuha = Asuha.http()
   .addRepo('git@bitbucket.org:user/repo.git')
+  .on('remote', (host, fullname, event, commits) => {
+    // on repo:push
+  })
   .listen(function () {
     const { address, port } = asuha.server().address()
     console.log('Asuha is listening on %s:%d', address, port)
