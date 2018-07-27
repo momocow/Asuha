@@ -2,6 +2,7 @@
 Asuha: the Webhook server for online git hosting services.
 
 [![travis](https://travis-ci.org/momocow/Asuha.svg?branch=master)](https://github.com/momocow/Asuha)
+[![Coverage Status](https://coveralls.io/repos/github/momocow/Asuha/badge.svg?branch=master)](https://coveralls.io/github/momocow/Asuha?branch=master)
 [![npm](https://img.shields.io/npm/dt/asuha.svg)](https://www.npmjs.com/package/asuha)
 [![npm](https://img.shields.io/npm/v/asuha.svg)](https://www.npmjs.com/package/asuha)
 
