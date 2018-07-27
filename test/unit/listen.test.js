@@ -9,16 +9,13 @@ test.cb('Asuha#listen()', function (t) {
 
   const _stub = stub(http, 'createServer')
   const _stub2 = stub()
-  const asuha = Asuha.http()
 
   _stub.returns({
     listen: _stub2
   })
+  _stub2.callsArg(0)
 
-  _stub2.callsFake(function (cb) {
-    cb()
-  })
-
+  const asuha = Asuha.http()
   asuha.listen(function () {
     t.true(_stub2.calledOnce)
     t.end()

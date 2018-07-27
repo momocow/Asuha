@@ -4,7 +4,8 @@
   "description": "Asuha: the Webhook server for online git hosting services.",
   "main": "index.js",
   "scripts": {
-    "test": "nyc ava test/*/*.test.js"
+    "test": "nyc ava test/*/*.test.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   "homepage": "https://github.com/momocow/Asuha#readme",
   "devDependencies": {
     "ava": "^0.25.0",
+    "coveralls": "^3.0.2",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.10.0",
     "eslint-plugin-node": "^6.0.1",
